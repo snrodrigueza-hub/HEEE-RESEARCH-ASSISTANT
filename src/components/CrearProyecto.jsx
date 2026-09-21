@@ -45,16 +45,7 @@ export default function CrearProyecto() {
       throw new Error(data.error || 'No se pudo generar el proyecto')
     }
 
-    setResult({
-      titulo: 'Propuesta generada con IA',
-      pregunta: data.resultado,
-      objetivoGeneral: 'Ver propuesta generada arriba.',
-      objetivosEspecificos: [],
-      diseno: 'Incluido en la propuesta generada por IA.',
-      poblacion: form.poblacion,
-      variables: [],
-      proximosPasos: []
-    })
+    setResult(data.resultado)
 
   } catch (error) {
     console.error(error)
