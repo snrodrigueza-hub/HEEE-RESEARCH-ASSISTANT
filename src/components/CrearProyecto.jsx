@@ -21,16 +21,48 @@ export default function CrearProyecto() {
     setResult(null)
   }
 
-  const estructurar = () => {
-    setLoading(true)
-    setResult(null)
-    // Simulación de respuesta de IA. Preparado para sustituirse por una
-    // llamada real a una API de estructuración de proyectos.
-    setTimeout(() => {
-      setResult(RESULTADO_ESTRUCTURACION)
-      setLoading(false)
-    }, 1000)
+  const estructurar = async () => {
+  setLoading(true)
+  setResult(null)
+
+  try {
+    const response = await fetch('/.netlify/functions/generar-proyecto', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        idea: form.idea,
+        area: form.especialidad,
+        poblacion: form.poblacion,
+        problema: form.problema
+      })
+    })
+
+    const data = await response.json()
+
+    if (!response.ok) {
+      throw new Error(data.error || 'No se pudo generar el proyecto')
+    }
+
+    setResult({
+      titulo: 'Propuesta generada con IA',
+      pregunta: data.resultado,
+      objetivoGeneral: 'Ver propuesta generada arriba.',
+      objetivosEspecificos: [],
+      diseno: 'Incluido en la propuesta generada por IA.',
+      poblacion: form.poblacion,
+      variables: [],
+      proximosPasos: []
+    })
+
+  } catch (error) {
+    console.error(error)
+    alert('No fue posible conectar con el asistente de IA. Inténtalo nuevamente.')
+  } finally {
+    setLoading(false)
   }
+}
 
   const canSubmit = form.idea.trim().length > 0
 
