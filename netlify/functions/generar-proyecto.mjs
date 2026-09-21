@@ -57,21 +57,50 @@ PROBLEMA DE INVESTIGACIÓN:
 ${problema}
 
 A partir exclusivamente de esta información, estructura una propuesta
-inicial que contenga:
+inicial de investigación.
 
-1. Título tentativo
-2. Pregunta de investigación
-3. Objetivo general
-4. Entre 3 y 5 objetivos específicos
-5. Diseño de estudio sugerido y breve justificación
-6. Población de estudio
-7. Variables principales sugeridas
-8. Próximos pasos recomendados
+REGLAS:
+- No inventes resultados, tamaños muestrales ni conclusiones.
+- No inventes antecedentes clínicos, características de pacientes ni datos que no hayan sido proporcionados.
+- Puedes sugerir decisiones metodológicas razonables, pero debes presentarlas como sugerencias y no como hechos.
+- Si falta información necesaria para definir un elemento, indícalo como "Por definir por el investigador".
+- No determines si el proyecto será aprobado por un comité de ética.
+- No incluyas datos identificables de pacientes.
+- Mantén un lenguaje académico, claro y conciso.
 
-No inventes resultados, tamaños muestrales ni conclusiones.
+Devuelve ÚNICAMENTE un objeto JSON válido.
+No uses Markdown.
+No uses bloques de código.
+No escribas ningún texto antes ni después del JSON.
 
-Termina con esta advertencia:
-"Contenido generado con inteligencia artificial. Requiere revisión del investigador y no sustituye la evaluación metodológica, institucional ni ética correspondiente."
+Utiliza exactamente esta estructura:
+
+{
+  "titulo": "Título tentativo",
+  "pregunta": "Pregunta de investigación",
+  "objetivoGeneral": "Objetivo general",
+  "objetivosEspecificos": [
+    "Objetivo específico 1",
+    "Objetivo específico 2",
+    "Objetivo específico 3"
+  ],
+  "diseno": "Diseño de estudio sugerido y breve justificación",
+  "poblacion": "Población de estudio",
+  "variables": [
+    "Variable principal 1",
+    "Variable principal 2"
+  ],
+  "proximosPasos": [
+    "Próximo paso 1",
+    "Próximo paso 2",
+    "Próximo paso 3"
+  ]
+}
+
+Los objetivos específicos deben ser entre 3 y 5.
+Las variables deben distinguir claramente, cuando corresponda, variable de exposición o intervención, variable de resultado y posibles covariables.
+
+El contenido es una orientación inicial generada con inteligencia artificial y requiere revisión del investigador.
 `;
 
     const modelos = ["gemini-3.8-flash", "gemini-3.7-flash", "gemini-3.1-flash-lite"];
@@ -131,7 +160,25 @@ if (!respuestaCorrecta) {
       );
     }
 
-    return Response.json({ resultado: texto });
+   let resultado;
+
+try {
+  const textoLimpio = texto
+    .replace(/```json/gi, "")
+    .replace(/```/g, "")
+    .trim();
+
+  resultado = JSON.parse(textoLimpio);
+} catch (error) {
+  console.error("Error al interpretar JSON de Gemini:", texto);
+
+  return Response.json(
+    { error: "La IA generó una respuesta con formato no válido. Inténtalo nuevamente." },
+    { status: 502 }
+  );
+}
+
+return Response.json({ resultado });
 
   } catch (error) {
     console.error("Error generar-proyecto:", error);
