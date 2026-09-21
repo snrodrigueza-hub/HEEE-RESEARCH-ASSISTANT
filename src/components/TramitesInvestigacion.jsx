@@ -81,7 +81,7 @@ export default function TramitesInvestigacion() {
         <div className="form-card__actions">
           <Button
             as="a"
-            href="https://drive.google.com/drive/folders/1eEqWIWcwn1bpDuGq3cR8_5UNF_4IPQGH?usp=drive_link"
+            href="https://drive.google.com/drive/folders/1eEqWIWcwn1bpDuGq3cR8_5UNF_4lPQGH"
             target="_blank"
             variant="secondary"
             icon={FolderOpen}
