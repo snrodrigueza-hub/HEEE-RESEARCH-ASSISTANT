@@ -74,38 +74,50 @@ Termina con esta advertencia:
 "Contenido generado con inteligencia artificial. Requiere revisión del investigador y no sustituye la evaluación metodológica, institucional ni ética correspondiente."
 `;
 
-    const response = await fetch(
-  "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent",
-  {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-goog-api-key": apiKey
-        },
-        body: JSON.stringify({
-          contents: [
-            {
-              role: "user",
-              parts: [{ text: prompt }]
-            }
-          ],
-          generationConfig: {
-            temperature: 0.3,
-            maxOutputTokens: 1800
+    const modelos = ["gemini-3.8-flash", "gemini-3.7-flash"];
+
+let data = null;
+let respuestaCorrecta = false;
+
+for (const modelo of modelos) {
+  const response = await fetch(
+    `https://generativelanguage.googleapis.com/v1beta/models/${modelo}:generateContent`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-goog-api-key": apiKey
+      },
+      body: JSON.stringify({
+        contents: [
+          {
+            role: "user",
+            parts: [{ text: prompt }]
           }
-        })
-      }
-    );
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      console.error("Gemini API error:", data);
-      return Response.json(
-        { error: "Gemini no pudo generar la respuesta." },
-        { status: 502 }
-      );
+        ],
+        generationConfig: {
+          maxOutputTokens: 1800
+        }
+      })
     }
+  );
+
+  data = await response.json();
+
+  if (response.ok) {
+    respuestaCorrecta = true;
+    break;
+  }
+
+  console.error(`Gemini API error con ${modelo}:`, data);
+}
+
+if (!respuestaCorrecta) {
+  return Response.json(
+    { error: "Gemini no pudo generar la respuesta en este momento." },
+    { status: 502 }
+  );
+}
 
     const texto =
       data?.candidates?.[0]?.content?.parts
