@@ -74,7 +74,7 @@ Termina con esta advertencia:
 "Contenido generado con inteligencia artificial. Requiere revisión del investigador y no sustituye la evaluación metodológica, institucional ni ética correspondiente."
 `;
 
-    const modelos = ["gemini-3.8-flash", "gemini-3.7-flash"];
+    const modelos = ["gemini-3.8-flash", "gemini-3.7-flash", "gemini-3.1-flash-lite"];
 
 let data = null;
 let respuestaCorrecta = false;
